@@ -17,7 +17,7 @@ class NoisyTest(SingleActionTest):
         super().__init__(**kwargs)
         # Set tests data
         self.max_tests = kwargs.get("max_tests", 30)
-        self.info = ["Помехоустрочивость", "Когда цвет внутри рамки", "станет красным", "выполните перекат."]
+        self.info = ["Помехоустрочивость", "Когда цвет внутри рамки", "станет красным,", "выполните приседание."]
         # Set colors
         self.colors = [(255, 0, 0), (0, 255, 0), (0, 200, 255), (124, 156, 145), (0, 0, 255)]
         self.set_random_index()
@@ -50,8 +50,11 @@ class NoisyTest(SingleActionTest):
     @property
     def status(self):
         """
-        Check, whether user's head is bended.
+        Check, whether user is performing a squat.
         """
         if self.pose is None:
             return False
-        return self.pose[0, 1] > self.pose[11, 1] and self.pose[0, 1]> self.pose[12, 1]
+        # return self.pose[0, 1] > self.pose[11, 1] and self.pose[0, 1] > self.pose[12, 1]
+        delta = 0.07
+        return (self.pose[23, 1] - self.pose[25, 1] > -delta 
+            and self.pose[24, 1] - self.pose[26, 1] > -delta)

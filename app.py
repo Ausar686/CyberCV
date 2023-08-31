@@ -9,6 +9,7 @@ import numpy as np
 
 from detector import Detector
 from base_test import BaseTest
+from utils import send_data
 
 
 class CyberCVApp:
@@ -62,7 +63,7 @@ class CyberCVApp:
     
     def start_test(self) -> None:
         """
-        Starts the test by cloasing all windows and showing demo.
+        Starts the test by closing all windows and showing demo.
         """
         cv2.destroyAllWindows()
         self.test.clear()
@@ -103,9 +104,10 @@ class CyberCVApp:
     
     def run(self):
         time.sleep(1)
-        self.email = input("Введите Ваш email: ")
-        print("Спасибо! Результаты будут зарегистрированы на сайте под вашим эл. адресом!")
+        self.email = input("\n\nВведите Ваш email: ")
+        print("Спасибо! Результаты будут зарегистрированы на сайте под вашим эл. адресом!\n\n")
         self.index = 0
+        self.test.init_audio()
         self.cap = cv2.VideoCapture(self.source)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.test.width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.test.height)
@@ -121,6 +123,7 @@ class CyberCVApp:
             cv2.imshow("CyberCV Tests", frame)
             k = cv2.waitKey(1)
             if len(self.test.data) >= self.test.max_tests and self.index:
+                self.test.congratulate()
                 self.to_next()
                 continue
             if self.test.is_exit_key(k):
@@ -131,3 +134,12 @@ class CyberCVApp:
                 self.to_previous()
         cv2.destroyAllWindows()
         self.cap.release()
+        self.test.deinit_audio()
+        time.sleep(1)
+        if self.is_over:
+            send_data(self)
+            print(f"\n\nВы успешно завершили тестирование!\nРезультаты занесены в Ваш личный кабинет\nE-mail: {self.email}")
+        else:
+            print("\n\nК сожалению, Вы прошли тестирование не полностью.\nПройдите его в следующий раз, когда Вам будет удобно,\nчтобы мы могли сохранить результаты в Вашем личном кабинете.")
+        input("Нажмите Enter, чтобы продолжить.\n")
+        return

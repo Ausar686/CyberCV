@@ -1,6 +1,11 @@
 # Created by: Ausar686
 # https://github.com/Ausar686
 
+import time
+import os
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "True"
+
 from detector import Detector
 from base_test import BaseTest
 from action_reaction_test import ActionReactionTest
@@ -11,6 +16,7 @@ from reaction_test import ReactionTest
 from tapping_test import TappingTest
 from app import CyberCVApp
 from utils import send_data
+
 
 test1 = ReactionTest(demo_path="ex1.mp4")
 test2 = ColorReactionTest(demo_path="ex2.mp4")
@@ -25,5 +31,3 @@ source = 0
 
 app = CyberCVApp(tests, source, detector)
 app.run()
-if app.is_over:
-	send_data(app)

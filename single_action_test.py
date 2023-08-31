@@ -3,6 +3,8 @@
 
 import time
 
+import numpy as np
+
 from base_test import BaseTest
 
 
@@ -16,7 +18,7 @@ class SingleActionTest(BaseTest):
         Sets time for test.
         """
         self.time_start = time.time()
-        self.switch_time = time.time() + 1
+        self.switch_time = time.time() + 1 + np.random.random()
         return
     
     @property
@@ -34,6 +36,7 @@ class SingleActionTest(BaseTest):
             self.set_time()
         if self.status:
             if self.is_action_color:
+                self.play_audio()
                 self.time_end = time.time()
                 time_reaction = round(self.time_end - self.time_start, 2)
                 self.data.append(time_reaction)

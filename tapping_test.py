@@ -79,6 +79,7 @@ class TappingTest(BaseTest):
         if self.time_start is None:
             self.set_time()
         if self.status:
+            self.play_audio()
             self.counter += 1
         if time.time() >= self.time_end:
             self.data.append(self.counter)

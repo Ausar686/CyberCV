@@ -89,7 +89,7 @@ class ActionReactionTest(SingleActionTest):
         # Set angle according to the time difference and color
         # If it's action color, the arrow should be directed to 12,
         # So the angle equals 0, whenver it's action time
-        angle = min(0, 120*time_diff) * (not self.is_action_color)
+        angle = min(0, 60*time_diff) * (not self.is_action_color)
         return angle
 
     def postprocess(self, frame: np.ndarray) -> None:
@@ -98,6 +98,34 @@ class ActionReactionTest(SingleActionTest):
         self.write_info(frame)
         self.write_status(frame)
         self.draw_clock(frame)
+        return
+
+    def set_time(self) -> None:
+        """
+        Override for SingleActionTest.set_time method,
+        that allows to keep the position of the arrow stable during resest. 
+        """
+        # If time is not set, call parent method
+        if self.time_start is None:
+            super().set_time()
+            return
+        cur_time = time.time()
+        # Early start case:
+        # User performs action too early
+        # We want to keep the amount of time left before the reaction almost the same
+        # (we add a small value to keep time "frozen" until user gets out of star pose)
+        # and yet update the start and swtich times
+        # so that user was forced to wait until the arrow reaches 12
+        # and only then perform an action
+        if self.switch_time > cur_time:
+            delta = 0.037
+            time_diff = self.switch_time - cur_time
+            self.time_start = time.time()
+            self.switch_time = self.time_start + time_diff + delta
+            return
+        # Any other case:
+        # Simply call parent method
+        super().set_time()
         return
     
     @property
@@ -113,4 +141,4 @@ class ActionReactionTest(SingleActionTest):
         right_hand = self.pose[12,0] >  self.pose[16,0] and self.pose[12, 1] > self.pose[16,1]
         # Left hip should be closer to the right side of the frame
         hips = self.pose[23,0] >  self.pose[24,0]
-        return  left_hand and right_hand and hips 
+        return left_hand and right_hand and hips

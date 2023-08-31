@@ -5,6 +5,7 @@ from typing import Union, Tuple
 
 import cv2
 import numpy as np
+import pygame
 
 from detector import Detector
 
@@ -15,10 +16,10 @@ class BaseTest:
     """
     
     _defaults = {
-        "width": 1920,
-        "height": 1080,
+        "width": 1280,
+        "height": 720,
         "font": cv2.FONT_HERSHEY_COMPLEX,
-        "font_scale": 1,
+        "font_scale": 0.6,
         "font_color": (255,0,0), # Blue
         "thickness": 2,
         "border_thickness": 150
@@ -27,6 +28,8 @@ class BaseTest:
     def __init__(self, **kwargs):
         """
         Initializes base class instance.
+        NOTE: In order to play sounds ensure, that you have 
+            "sound.mp3" and "finish.mp3" files in main folder.
         """
         # Set data attributes
         self.demo_path = kwargs.get("demo_path")
@@ -34,6 +37,11 @@ class BaseTest:
         self.data = []
         self.max_tests = 0
         self.info = kwargs.get("info", [])
+        # Set audio data
+        self.init_audio()
+        self.audio = "sound.mp3"
+        self.finish_audio = "finish.mp3"
+        self.load_audio()
         # Set cv2 parameters
         for param in self._defaults:
             setattr(self, param, kwargs.get(param, self._defaults[param]))
@@ -43,6 +51,83 @@ class BaseTest:
         self.init_colors()
         # Init time attributes
         self.init_time()
+        return
+
+    @staticmethod
+    def init_audio() -> None:
+        """
+        Initializes pygame mixer, in order to use it for playing audio.
+        """
+        pygame.mixer.init()
+        return
+
+    def load_audio(self) -> None:
+        """
+        Tries to load an audio into pygame mixer.
+        If fails (file does not exist) simply passes, so no sound will be played.
+        """
+        try:
+            pygame.mixer.music.load(self.audio)
+            return
+        except Exception:
+            return
+
+    def load_finish_audio(self) -> None:
+        """
+        Tries to load a finish audio into pygame mixer.
+        If fails (file does not exist) simply passes, so no sound will be played.
+        """
+        try:
+            pygame.mixer.music.load(self.finish_audio)
+            return
+        except Exception as e:
+            print(e)
+            raise
+            return
+
+    @staticmethod
+    def play_audio() -> None:
+        """
+        Tries to play stored audio. If no audio is stored, does nothing.
+        If any other exception occures, does nothing.
+        """
+        try:
+            pygame.mixer.music.play()
+            return
+        except Exception as e:
+            print(e)
+            raise
+            return
+
+    def wait_audio(self) -> None:
+        """
+        Waits, until audio file stops playing.
+        Is required for 'congratulate' method
+        """
+        while pygame.mixer.music.get_busy():
+            pass
+        return
+
+    def congratulate(self) -> None:
+        """
+        Sets test finish sound, plays it and sets default sound back.
+        Plays default audio, if finish audio is not set.
+        Does nothing, if both audio and finish audio are not set.
+        """
+        self.load_finish_audio()
+        self.play_audio()
+        self.wait_audio()
+        self.load_audio()
+        return
+
+    def deinit_audio(self) -> None:
+        """
+        Releases pygame.mixer resources
+        NOTE: Be careful with this method, as it executes pygame.mixer.quit()
+            for all tests, so you will need to reinit mixer, 
+            using BaseTest.init_audio method.
+        """
+        pygame.mixer.quit()
         return
     
     def init_time(self) -> None:
@@ -110,6 +195,7 @@ class BaseTest:
             ret, frame = cap.read()
             if not ret:
                 break
+            frame = cv2.resize(frame, (self.width, self.height))
             self.edit_demo_frame(frame)
             cv2.imshow(self.window_name, frame)
             k = cv2.waitKey(7) # 15 ms is enough to make a demo look smooth

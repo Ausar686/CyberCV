@@ -6,9 +6,9 @@ import json
 import requests
 
 from why import why
-from app import CyberCVApp
 
-def send_data(app: CyberCVApp):
+
+def send_data(app):
 	email = app.email
 	lists = [test.data for test in app.tests[1:]]
 	tests = why(lists, email)

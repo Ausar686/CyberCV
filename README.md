@@ -29,14 +29,26 @@ Libraries for building .exe file:
 ```bash
 git clone https://github.com/Ausar686/CyberCV
 cd CyberCV
-pip install -r requirements.txt
+pip install requirements.txt
 ```
 
-## Building an .exe file
+## Running
+### Windows
+```bash
+python main.py
+```
+
+### Linux
+```bash
+python3 main.py
+```
+
+## Building an .exe file (Windows only)
 Run inside "CyberCV" directory: 
 ```bash
 pyinstaller main.py
 ```
 
-
-
+> **Note:** Don't forget to copy video files into created directory.
+**DO NOT** rename video files.
+**DO NOT** create individual dirctory for .mp4 files inside your directory with .exe file

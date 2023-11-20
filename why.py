@@ -6,6 +6,22 @@ import math
 
 import numpy as np
 
+# This file consists of only one function: why
+# This function was written by another developer with, 
+# let's be honest, somewhat special coding style.
+# I have been rewriting this entire project from scratch 
+# in 1 day (20+ hours of coding), so I was done 
+# at the moment I saw this code.
+# Basically, it takes user's reaction results and sends it to remote server.
+# I strongly do not recommend anyone to even try to read and/or understand this.
+# But if you are brave enough: feel free to enjoy this journey.
+# I just want to mention, that I've simply wrapped the code into "why" function.
+# Everything else you see - you see it in the way it was provided to me 
+# in a single file (alongside with all other parts, that, fortunately, 
+# you can't see, cause I've rewritten this code from scratch).
+# With all this done, here is my final comment:
+# "Lasciate ogne speranza, voi ch'entrate"
+
 
 def why(lists: list, email: str) -> List[dict]:
     # Создание списка с данными для тестов

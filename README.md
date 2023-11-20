@@ -29,7 +29,7 @@ Libraries for building .exe file:
 ```bash
 git clone https://github.com/Ausar686/CyberCV
 cd CyberCV
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Building an .exe file
